@@ -48,6 +48,7 @@ PROJECT_APPS = [  # 새로운 모델들 만들때 일단 여기 꼭 넣어야함
     "reviews.apps.ReviewsConfig",
     "reservations.apps.ReservationsConfig",
     "lists.apps.ListsConfig",
+    "conversations.apps.ConversationsConfig",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
