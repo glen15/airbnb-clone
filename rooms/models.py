@@ -1,9 +1,6 @@
 from django.db import models
 from django_countries.fields import CountryField
 from core import models as core_models  # import 이후 위에거랑 이름 같으니 as 로 명시해주는 것
-from users import (
-    models as user_models,
-)  # host에 필요한 user 정보를 ForeignKey에 연결하기 위해서 import
 
 
 class AbstractItem(core_models.TimeStampedModel):
@@ -25,6 +22,7 @@ class RoomType(AbstractItem):
 
     class Meta:
         verbose_name = "Room Type"
+        ordering = ["name"]  # 이름기준 기준으로 순서정리 - 문서에서 ordering 검색
 
 
 class Amenity(AbstractItem):
@@ -51,6 +49,18 @@ class HouseRule(AbstractItem):
         verbose_name = "House Rule"
 
 
+class Photo(core_models.TimeStampedModel):
+
+    """ Photo Model Definition """
+
+    caption = models.CharField(max_length=80)
+    file = models.ImageField()
+    room = models.ForeignKey("Room", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.caption
+
+
 class Room(core_models.TimeStampedModel):
 
     """ Room Model Definition """
@@ -69,12 +79,12 @@ class Room(core_models.TimeStampedModel):
     check_out = models.TimeField()
     isntant_book = models.BooleanField(default=False)
     host = models.ForeignKey(
-        user_models.User, on_delete=models.CASCADE
+        "users.User", on_delete=models.CASCADE
     )  # on_delete 삭제행동이 진행되는데 User가 삭제되면 연결된 room도 연쇄삭제(cascade)
-    room_type = models.ForeignKey(RoomType, on_delete=models.SET_NULL, null=True)
-    amenities = models.ManyToManyField(Amenity)
-    facilities = models.ManyToManyField(Facility)
-    house_rules = models.ManyToManyField(HouseRule)
+    room_type = models.ForeignKey("RoomType", on_delete=models.SET_NULL, null=True)
+    amenities = models.ManyToManyField("Amenity", blank=True)
+    facilities = models.ManyToManyField("Facility", blank=True)
+    house_rules = models.ManyToManyField("HouseRule", blank=True)
 
     def __str__(self):
         return self.name  # list 에서 보일 이름을 룸 명으로 지정했던걸로 가져오는 것 / 기존에는 room_object_1 이런식
