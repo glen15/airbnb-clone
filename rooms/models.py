@@ -66,10 +66,10 @@ class Room(core_models.TimeStampedModel):
     """ Room Model Definition """
 
     name = models.CharField(max_length=140)
-    discription = models.TextField()
+    description = models.TextField()
     country = CountryField()
     city = models.CharField(max_length=80)
-    pircie = models.IntegerField()
+    price = models.IntegerField()
     address = models.CharField(max_length=140)
     guests = models.IntegerField()
     beds = models.IntegerField()
@@ -77,7 +77,7 @@ class Room(core_models.TimeStampedModel):
     baths = models.IntegerField()
     check_in = models.TimeField()
     check_out = models.TimeField()
-    isntant_book = models.BooleanField(default=False)
+    instant_book = models.BooleanField(default=False)
     host = models.ForeignKey(
         "users.User", on_delete=models.CASCADE
     )  # on_delete 삭제행동이 진행되는데 User가 삭제되면 연결된 room도 연쇄삭제(cascade)
