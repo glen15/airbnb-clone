@@ -54,7 +54,7 @@ class Photo(core_models.TimeStampedModel):
     """ Photo Model Definition """
 
     caption = models.CharField(max_length=80)
-    file = models.ImageField()
+    file = models.ImageField(upload_to="room_photos")  # 파일 업로드시 저장될 경로 지정
     room = models.ForeignKey("Room", related_name="photos", on_delete=models.CASCADE)
 
     def __str__(self):
@@ -90,6 +90,13 @@ class Room(core_models.TimeStampedModel):
 
     def __str__(self):
         return self.name  # list 에서 보일 이름을 룸 명으로 지정했던걸로 가져오는 것 / 기존에는 room_object_1 이런식
+
+    # model에서 들어오는걸 덮어쓰기하는거! 이거 잘알아야겠음. 내가 원하는 형태로 변경 가능 - 사람들이 입력한걸 다 대문자로 바꾼다던지 - 통일화에 좋다
+    def save(
+        self, *args, **kwargs
+    ):  # super()로 부모 속성에 접근하는 것 / 도시를 쓰고 save 했을때 그것을 받아서 새로운걸로 덮어쓸거야. super()에는 원래 입력한게 남겠지
+        self.city = str.capitalize(self.city)
+        super().save(*args, **kwargs)
 
     def total_rating(self):
         all_reviews = self.reviews.all()

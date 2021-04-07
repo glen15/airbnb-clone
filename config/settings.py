@@ -134,3 +134,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 AUTH_USER_MODEL = "users.User"
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")  # 사진 업로드하면 들어가는 업로드라는 폴더를 생성하는 것
+
+MEDIA_URL = "/media/"  # 파일폴더명은 uploads지만 url에서는 media로 나올거야.
