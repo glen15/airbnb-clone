@@ -90,3 +90,10 @@ class Room(core_models.TimeStampedModel):
 
     def __str__(self):
         return self.name  # list 에서 보일 이름을 룸 명으로 지정했던걸로 가져오는 것 / 기존에는 room_object_1 이런식
+
+    def total_rating(self):
+        all_reviews = self.reviews.all()
+        all_ratings = 0
+        for review in all_reviews:
+            all_ratings += review.rating_average()
+        return all_ratings / len(all_reviews)
