@@ -1,5 +1,6 @@
 import random
 from django.core.management.base import BaseCommand
+from django.contrib.admin.utils import flatten
 from django_seed import Seed
 from rooms import models as room_models
 from users import models as user_models
@@ -33,5 +34,16 @@ class Command(BaseCommand):
                 "baths": lambda x: random.randint(1, 5),
             },
         )
-        seeder.execute()
+        created_photos = seeder.execute()
+        created_clean = flatten(
+            list(created_photos.values())
+        )  # 2중 리스트라서 flatten으로 안에꺼만 꺼내는 것
+        for pk in created_clean:  # 생성된 룸에서 id(pk)로 불러들여서 i pk로넣는것
+            room = room_models.Room.objects.get(pk=pk)  # 프라이머리 키(pk=id)로 그 룸을 찾고
+            for i in range(3, random.randint(10, 17)):
+                room_models.Photo.objects.create(  # 룸 모델에서 사진을 생성 하면서 캡션 룸이름 사진까지 만드는거
+                    caption=seeder.faker.sentence(),
+                    room=room,
+                    file=f"room_photos/{random.randint(1, 31)}.webp",  # 사진파일 경로, 그중에서 1~31 랜덤에 파일 형식까지 지정
+                )
         self.stdout.write(self.style.SUCCESS(f"{number} rooms created"))
