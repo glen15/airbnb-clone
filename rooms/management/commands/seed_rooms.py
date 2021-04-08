@@ -34,6 +34,10 @@ class Command(BaseCommand):
                 "baths": lambda x: random.randint(1, 5),
             },
         )
+        # 룸에 사진, amenity facility rules 램덤으로 등록하는 것
+        amenities = room_models.Amenity.objects.all()
+        facilities = room_models.Facility.objects.all()
+        rules = room_models.HouseRule.objects.all()
         created_photos = seeder.execute()
         created_clean = flatten(
             list(created_photos.values())
@@ -46,4 +50,19 @@ class Command(BaseCommand):
                     room=room,
                     file=f"room_photos/{random.randint(1, 31)}.webp",  # 사진파일 경로, 그중에서 1~31 랜덤에 파일 형식까지 지정
                 )
+            for a in amenities:
+                magic_number = random.randint(0, 15)
+                if magic_number % 2 == 0:  # 나머지 0이면 추가되도록 (그냥 램덤성을 주기 위해서 한거지)
+                    room.amenities.add(a)  # many to many 에서는 add를 활용해서 추가할것
+
+            for f in facilities:
+                magic_number = random.randint(0, 15)
+                if magic_number % 2 == 0:
+                    room.facilities.add(f)
+
+            for r in rules:
+                magic_number = random.randint(0, 15)
+                if magic_number % 2 == 0:
+                    room.house_rules.add(r)
+
         self.stdout.write(self.style.SUCCESS(f"{number} rooms created"))

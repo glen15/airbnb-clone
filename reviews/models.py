@@ -11,7 +11,7 @@ class Review(core_models.TimeStampedModel):
     communication = models.IntegerField()
     cleanliness = models.IntegerField()
     location = models.IntegerField()
-    chech_in = models.IntegerField()
+    check_in = models.IntegerField()
     value = models.IntegerField()
     user = models.ForeignKey(
         "users.User", related_name="reviews", on_delete=models.CASCADE
@@ -28,7 +28,7 @@ class Review(core_models.TimeStampedModel):
             self.accuracy
             + self.cleanliness
             + self.location
-            + self.chech_in
+            + self.check_in
             + self.value
             + self.communication
         ) / 6
