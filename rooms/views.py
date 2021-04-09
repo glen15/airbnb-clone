@@ -1,25 +1,20 @@
-from django.shortcuts import render
-from . import models
 from math import ceil
+from django.shortcuts import render, redirect
+from django.core.paginator import Paginator, EmptyPage
+from . import models
 
 
 def all_rooms(request):
     page = request.GET.get("page", 1)
-    # request를 통해서 url쪽에서 page 키값의 벨류를 받는데 없으면 1으로하는 것(디폴트)
-    page = int(page or 1)  # 페이지가 생성 된 이후에는 위에있는 1을받는 디폴트가 작동안해서 오류페이지가 나오는 것을 방지
-    page_size = 10
-    limit = page_size * page
-    offset = limit - page_size
-    all_rooms = models.Room.objects.all()[offset:limit]
-    page_count = ceil(models.Room.objects.count() / page_size)
-    return render(
-        request,
-        "rooms/home.html",
-        context={
-            "rooms": all_rooms,
-            "page": page,
-            "page_count": page_count,
-            "page_range": range(1, page_count),
-        },
-    )
-    # render 통해서 html을 가져오는데, context를 이용해서 여기있는 변수를 html에서 사용할 수 있음.
+    room_list = (
+        models.Room.objects.all()
+    )  # 쿼리셋만 만들뿐 즉시 불러오는건 아니다 = 데이터베이스에 all이 다들어가는 사태는 안일어나
+    paginator = Paginator(
+        room_list, 10, orphans=5
+    )  # orphans 남는애들인데 이렇게 5로 지정하면 5개까지는 마지막페이지에 넣어서 보여줌
+
+    try:
+        rooms = paginator.page(int(page))  # 11.3 commit에 수동으로한걸 자동으로 해줌
+        return render(request, "rooms/home.html", {"page": rooms})
+    except EmptyPage:
+        return redirect("/")  # 홈으로 리다이렉트 시켜서 유저가 url을 막써놓은걸 다시 정리 시켜주는 것
