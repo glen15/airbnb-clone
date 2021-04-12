@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from django_countries.fields import CountryField
 from core import models as core_models  # import 이후 위에거랑 이름 같으니 as 로 명시해주는 것
 
@@ -97,6 +98,12 @@ class Room(core_models.TimeStampedModel):
     ):  # super()로 부모 속성에 접근하는 것 / 도시를 쓰고 save 했을때 그것을 받아서 새로운걸로 덮어쓸거야. super()에는 원래 입력한게 남겠지
         self.city = str.capitalize(self.city)
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):  # 내가 원하는 model을 찾을 수 있는 url을 주는 것
+        return reverse("rooms:detail", kwargs={"pk": self.pk})
+        # rooms는 config->urls.py->urlpatterns->namespace 에 있는 rooms
+        # detail은 rooms->urls.py->urlpatterns->name에 있는 detail
+        # admin에서 각 room에 들어갔을때 우측에 나오는  view on site를 만들어주는 것
 
     def total_rating(self):
         all_reviews = self.reviews.all()

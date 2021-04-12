@@ -9,7 +9,12 @@ Home
 {% block content %}
 
     {% for room  in rooms  %}
-        <h1>{{room.name}} / ${{room.price}}</h1>
+        <h3>
+            <a href="{% url 'rooms:detail' room.pk %}"> <!--뒤에 room.pk 없으면 arguments(urls.py path에 int:pk)가 없을때의 detail이 없다는 오류가 나옴-->
+                 <!--룸 이름 클릭하면 이제 그룸의 아이디를 url로 가지는 경로로 이동 django의 url tag, config -> urls.py의 namespace인 rooms : , rooms -> urls.py의 name인 detail-->
+                {{room.name}} / ${{room.price}}
+            </a>
+        </h3>
     {% endfor %}
     
     <h5>
