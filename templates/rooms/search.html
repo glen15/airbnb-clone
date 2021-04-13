@@ -5,12 +5,44 @@
     Search
 {% endblock page_title %}
     
+<!--base에 따로 search-bar 만들어놓고 모든페이지에 뜨게한뒤 , 여기 서치에서는 서치를 볼필요 없으니 밑에 빈 블럭으로 만들어서 숨기는 것
+그렇게하고 밑에 있는 블럭에서 새롭게 같은형식으로 만들어 두기-->
+{% block search-bar %} 
+{% endblock search-bar %}
+
+    
 
 {% block content %}
 
     <h2>Search!</h2>
 
-    <h4>Searching by {{city}}</h4>
+    <form method="get" action="{% url 'rooms:search' %}">
+        <div>
+            <label for="city">City</label> <!--밑에 id="city"를 for에 가져온것-->
+            <input value="{{city}}" id="city" name="city" placeholder="Search by City" />
+        </div>    
+
+        <div>
+            <label for="country">Country</label> 
+            <select id="country" name="country">
+                {% for country in countries %}
+                    <option value="{{country.code}}">{{country.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="room_type">Room Type</label> 
+            <select id="room_type" name="room_type">
+                {% for room_type in room_types %}
+                    <option value="{{room_type.pk}}">{{room_type.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button>Search</button>
+    </form> 
+
 
 {% endblock content %}
     

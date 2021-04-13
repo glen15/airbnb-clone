@@ -1,11 +1,12 @@
 from django.views.generic import ListView, DetailView
 from django.shortcuts import render
-from django.urls import reverse
+from django_countries import countries
 from . import models
 
 # 밑에 둘은 function기반으로할때 사용
 # from django.http import Http404
 # from django.shortcuts import render, redirect
+# from django.urls import reverse
 
 
 class HomeView(ListView):  # core폴더의 url에도 넣어뒀음
@@ -41,8 +42,13 @@ class RoomDetail(
 
 
 def search(request):
-    city = request.GET.get("city")
+    city = request.GET.get(
+        "city", "Anywhere"
+    )  # Anywhere은 디폴트값을 줘서, 아무것도 없을때 오류나는 것을 방지
     city = str.capitalize(city)  # 데이터베이스 안에는 첫번째가 대문자로 되어있어서 거기에 맞게 변경
+    room_types = models.RoomType.objects.all()
     return render(
-        request, "rooms/search.html", {"city": city}
+        request,
+        "rooms/search.html",
+        {"city": city, "countries": countries, "room_types": room_types},
     )  # html 이용가능하게 city를 context에 넣어주고
