@@ -1,14 +1,14 @@
 {%extends "base.html" %}
 
 
-{% block page_name%}
-    Home
-{% endblock page_name%}
+{% block page_title%}
+    {{room.name}}
+{% endblock page_title%}
 
 
 {% block content %}
 <div>    
-    <h1>{{room.name}}</h1>
+    <h1>{{room.name}}</h1> <!--여기서 room은 model name, object로 받을 수도 있다-->
     <h3>{{room.description}}</h3>
 </div>
 <div>

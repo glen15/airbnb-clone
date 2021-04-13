@@ -4,5 +4,9 @@ from . import views
 app_name = "rooms"
 
 urlpatterns = [
-    path("<int:pk>", views.room_detail, name="detail")
-]  # 각 룸 id를 url뒤에 붙여서 링크연결되도록
+    path("<int:pk>", views.RoomDetail.as_view(), name="detail"),
+    path("search/", views.search, name="search"),
+]
+# 각 룸 id를 url뒤에 붙여서 링크연결되도록
+# 두번째 인자로 views.room_detail, 넣는게 function 방식으로 reviews만든 것
+# views에서 render하고 html 만들고 여기에 path추가
