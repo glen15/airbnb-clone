@@ -42,13 +42,29 @@ class RoomDetail(
 
 
 def search(request):
-    city = request.GET.get(
-        "city", "Anywhere"
-    )  # Anywhere은 디폴트값을 줘서, 아무것도 없을때 오류나는 것을 방지
+    city = request.GET.get("city", "Anywhere")
+    # Anywhere은 디폴트값을 줘서, 아무것도 없을때 오류나는 것을 방지
     city = str.capitalize(city)  # 데이터베이스 안에는 첫번째가 대문자로 되어있어서 거기에 맞게 변경
+    country = request.GET.get("country", "KR")
+    room_type = int(request.GET.get("room_type", 0))
     room_types = models.RoomType.objects.all()
+
+    # request로 받은 것 -> 서치버튼올  찾고 나서도 그페이지에서는 폼을 기억하게
+    form = {
+        "city": city,
+        "s_country": country,
+        "s_room_type": room_type,
+    }
+    # 데이터베이스에서 받은것 -> 목록보여주기용
+    choices = {
+        "countries": countries,
+        "room_types": room_types,
+    }
+
     return render(
         request,
         "rooms/search.html",
-        {"city": city, "countries": countries, "room_types": room_types},
-    )  # html 이용가능하게 city를 context에 넣어주고
+        {**form, **choices},
+    )
+    # html 이용가능하게 city를 context에 넣어주고
+    # from 이랑 choices가 딕셔너리 구조라서 +가 안되서 ** 이용해서 다 언팩해둔것
