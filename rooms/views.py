@@ -47,18 +47,39 @@ def search(request):
     city = str.capitalize(city)  # 데이터베이스 안에는 첫번째가 대문자로 되어있어서 거기에 맞게 변경
     country = request.GET.get("country", "KR")
     room_type = int(request.GET.get("room_type", 0))
-    room_types = models.RoomType.objects.all()
+    price = int(request.GET.get("price", 0))
+    guests = int(request.GET.get("guests", 0))
+    bedrooms = int(request.GET.get("bedrooms", 0))
+    beds = int(request.GET.get("beds", 0))
+    baths = int(request.GET.get("baths", 0))
+    s_amenities = request.GET.getlist("amenities")
+    s_facilities = request.GET.getlist("facilities")
+    # 마지막둘은 리스트형식으로 불러와야 체크박스 된 애들을 전부 가져옴
 
     # request로 받은 것 -> 서치버튼올  찾고 나서도 그페이지에서는 폼을 기억하게
     form = {
         "city": city,
         "s_country": country,
         "s_room_type": room_type,
+        "price": price,
+        "guests": guests,
+        "bedrooms": bedrooms,
+        "beds": beds,
+        "baths": baths,
+        "s_amenities": s_amenities,
+        "s_facilities": s_facilities,
     }
+
+    room_types = models.RoomType.objects.all()
+    amenities = models.Amenity.objects.all()
+    facilities = models.Facility.objects.all()
+
     # 데이터베이스에서 받은것 -> 목록보여주기용
     choices = {
         "countries": countries,
         "room_types": room_types,
+        "amenities": amenities,
+        "facilities": facilities,
     }
 
     return render(
