@@ -52,6 +52,10 @@ def search(request):
     bedrooms = int(request.GET.get("bedrooms", 0))
     beds = int(request.GET.get("beds", 0))
     baths = int(request.GET.get("baths", 0))
+    instant = bool(
+        request.GET.get("instant", False)
+    )  # True가 텍스트로 되어있을 수 있어서 불리언 타입으로 확실하게
+    superhost = bool(request.GET.get("superhost", False))
     s_amenities = request.GET.getlist("amenities")
     s_facilities = request.GET.getlist("facilities")
     # 마지막둘은 리스트형식으로 불러와야 체크박스 된 애들을 전부 가져옴
@@ -66,6 +70,8 @@ def search(request):
         "bedrooms": bedrooms,
         "beds": beds,
         "baths": baths,
+        "instant": instant,
+        "superhost": superhost,
         "s_amenities": s_amenities,
         "s_facilities": s_facilities,
     }
@@ -82,10 +88,52 @@ def search(request):
         "facilities": facilities,
     }
 
+    filter_args = {}
+
+    if city != "Anywhere":
+        filter_args["city__startswith"] = city
+
+    filter_args["country"] = country
+
+    if room_type != 0:
+        filter_args["room_type__pk"] = room_type
+        # room_type은 forignkey이고 거기서 __pk로 그안에서 pk를 필터링해서 가져오는 것
+
+    if price != 0:
+        filter_args["price__lte"] = price  # lte 작거나 같음
+
+    if guests != 0:
+        filter_args["guests__gte"] = guests  # gte 크거나 같음
+
+    if bedrooms != 0:
+        filter_args["bedrooms__gte"] = bedrooms
+
+    if beds != 0:
+        filter_args["beds__gte"] = beds
+
+    if baths != 0:
+        filter_args["baths__gte"] = baths
+
+    if instant is True:
+        filter_args["instant_book"] = True  # moelds.py에 있는 instant_book 이름
+
+    if superhost is True:
+        filter_args["host__superhost"] = True
+
+    if len(s_amenities) > 0:
+        for s_amenity in s_amenities:
+            filter_args["amenities__pk"] = int(s_amenity)
+
+    if len(s_facilities) > 0:
+        for s_facility in s_facilities:
+            filter_args["facilities__pk"] = int(s_facility)
+
+    rooms = models.Room.objects.filter(**filter_args)
+
     return render(
         request,
         "rooms/search.html",
-        {**form, **choices},
+        {**form, **choices, "rooms": rooms},
     )
     # html 이용가능하게 city를 context에 넣어주고
     # from 이랑 choices가 딕셔너리 구조라서 +가 안되서 ** 이용해서 다 언팩해둔것
