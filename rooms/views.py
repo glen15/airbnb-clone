@@ -1,7 +1,7 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, View
 from django.shortcuts import render
-from django_countries import countries
-from . import models
+from django.core.paginator import Paginator
+from . import models, forms
 
 # 밑에 둘은 function기반으로할때 사용
 # from django.http import Http404
@@ -41,99 +41,80 @@ class RoomDetail(
 #         # setting.py 에서 DEBUG = False, ALLOWED_HOST = "*" 해야지만 이 templates에 있는 404.html을 볼 수 있다
 
 
-def search(request):
-    city = request.GET.get("city", "Anywhere")
-    # Anywhere은 디폴트값을 줘서, 아무것도 없을때 오류나는 것을 방지
-    city = str.capitalize(city)  # 데이터베이스 안에는 첫번째가 대문자로 되어있어서 거기에 맞게 변경
-    country = request.GET.get("country", "KR")
-    room_type = int(request.GET.get("room_type", 0))
-    price = int(request.GET.get("price", 0))
-    guests = int(request.GET.get("guests", 0))
-    bedrooms = int(request.GET.get("bedrooms", 0))
-    beds = int(request.GET.get("beds", 0))
-    baths = int(request.GET.get("baths", 0))
-    instant = bool(
-        request.GET.get("instant", False)
-    )  # True가 텍스트로 되어있을 수 있어서 불리언 타입으로 확실하게
-    superhost = bool(request.GET.get("superhost", False))
-    s_amenities = request.GET.getlist("amenities")
-    s_facilities = request.GET.getlist("facilities")
-    # 마지막둘은 리스트형식으로 불러와야 체크박스 된 애들을 전부 가져옴
+class SearchView(View):
 
-    # request로 받은 것 -> 서치버튼올  찾고 나서도 그페이지에서는 폼을 기억하게
-    form = {
-        "city": city,
-        "s_country": country,
-        "s_room_type": room_type,
-        "price": price,
-        "guests": guests,
-        "bedrooms": bedrooms,
-        "beds": beds,
-        "baths": baths,
-        "instant": instant,
-        "superhost": superhost,
-        "s_amenities": s_amenities,
-        "s_facilities": s_facilities,
-    }
+    """ Search View Definition"""
 
-    room_types = models.RoomType.objects.all()
-    amenities = models.Amenity.objects.all()
-    facilities = models.Facility.objects.all()
+    def get(self, request):
+        country = request.GET.get("country")
+        if country:
+            form = forms.SearchForm(
+                request.GET
+            )  # request.GET 넣어서 서치버튼 눌렀을때 설정 기억하도록하는 것
+            if form.is_valid():  # if 오류가 없다면
+                city = form.cleaned_data.get("city")
+                country = form.cleaned_data.get("country")
+                room_type = form.cleaned_data.get("room_type")
+                price = form.cleaned_data.get("price")
+                guests = form.cleaned_data.get("guests")
+                bedrooms = form.cleaned_data.get("bedrooms")
+                beds = form.cleaned_data.get("beds")
+                baths = form.cleaned_data.get("baths")
+                instant_book = form.cleaned_data.get("instant_book")
+                superhost = form.cleaned_data.get("superhost")
+                amenities = form.cleaned_data.get("amenities")
+                facilities = form.cleaned_data.get("facilities")
 
-    # 데이터베이스에서 받은것 -> 목록보여주기용
-    choices = {
-        "countries": countries,
-        "room_types": room_types,
-        "amenities": amenities,
-        "facilities": facilities,
-    }
+                filter_args = {}
 
-    filter_args = {}
+                if city != "Anywhere":
+                    filter_args["city__startswith"] = city
 
-    if city != "Anywhere":
-        filter_args["city__startswith"] = city
+                filter_args["country"] = country
 
-    filter_args["country"] = country
+                if room_type is not None:
+                    filter_args["room_type"] = room_type
 
-    if room_type != 0:
-        filter_args["room_type__pk"] = room_type
-        # room_type은 forignkey이고 거기서 __pk로 그안에서 pk를 필터링해서 가져오는 것
+                if price is not None:
+                    filter_args["price__lte"] = price  # lte 작거나 같음
 
-    if price != 0:
-        filter_args["price__lte"] = price  # lte 작거나 같음
+                if guests is not None:
+                    filter_args["guests__gte"] = guests  # gte 크거나 같음
 
-    if guests != 0:
-        filter_args["guests__gte"] = guests  # gte 크거나 같음
+                if bedrooms is not None:
+                    filter_args["bedrooms__gte"] = bedrooms
 
-    if bedrooms != 0:
-        filter_args["bedrooms__gte"] = bedrooms
+                if beds is not None:
+                    filter_args["beds__gte"] = beds
 
-    if beds != 0:
-        filter_args["beds__gte"] = beds
+                if baths is not None:
+                    filter_args["baths__gte"] = baths
 
-    if baths != 0:
-        filter_args["baths__gte"] = baths
+                if instant_book is True:
+                    filter_args["instant_book"] = True  # moelds.py에 있는 instant_book 이름
 
-    if instant is True:
-        filter_args["instant_book"] = True  # moelds.py에 있는 instant_book 이름
+                if superhost is True:
+                    filter_args["host__superhost"] = True
 
-    if superhost is True:
-        filter_args["host__superhost"] = True
+                for amenity in amenities:
+                    filter_args["amenities"] = amenity
 
-    if len(s_amenities) > 0:
-        for s_amenity in s_amenities:
-            filter_args["amenities__pk"] = int(s_amenity)
+                for facility in facilities:
+                    filter_args["facilities"] = facility
 
-    if len(s_facilities) > 0:
-        for s_facility in s_facilities:
-            filter_args["facilities__pk"] = int(s_facility)
+                qs = models.Room.objects.filter(**filter_args).order_by("-created")
 
-    rooms = models.Room.objects.filter(**filter_args)
+                paginator = Paginator(qs, 10, orphans=5)
 
-    return render(
-        request,
-        "rooms/search.html",
-        {**form, **choices, "rooms": rooms},
-    )
-    # html 이용가능하게 city를 context에 넣어주고
-    # from 이랑 choices가 딕셔너리 구조라서 +가 안되서 ** 이용해서 다 언팩해둔것
+                page = request.GET.get("page", 1)
+
+                rooms = paginator.get_page(page)
+
+                return render(
+                    request, "rooms/search.html", {"form": form, "rooms": rooms}
+                )
+
+        else:
+            form = forms.SearchForm()
+            # 첫form을 가져와야할때(데이터확인과정없는 순간)  request.GET아닌걸로 연결해서 required 안뜨게 하는거
+        return render(request, "rooms/search.html", {"form": form})
