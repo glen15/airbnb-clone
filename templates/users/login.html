@@ -13,6 +13,10 @@
     
 
 {% block content %}
-    Hello users!
+    <form method="POST" action="{% url 'users:login' %}">
+        {% csrf_token %} <!--사이트간 위조 방지 기술, 토큰으로 지정된 웹사이트에서 post가 왔는지 확인해줌-->
+        {{form.as_p}}
+        <button>Login</button>
+    </form>
 {% endblock content %}
     
