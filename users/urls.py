@@ -5,5 +5,7 @@ app_name = "users"  # config urls.py에 넣고나면 app_name 없다고 오류�
 urlpatterns = [
     path("login", views.LoginView.as_view(), name="login"),
     path("logout", views.log_out, name="logout"),
-    # 위랑 다른 이유: log_out이 import logout에서 가져온 함수이기 때문
-]  # urls.py작업해주고 config urls.py 에 추가하기
+    path("signup", views.SignUpView.as_view(), name="signup"),
+]
+# 위랑 다른 이유: log_out이 import logout에서 가져온 함수이기 때문
+#   # urls.py작업해주고 config urls.py 에 추가하기
