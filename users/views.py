@@ -3,7 +3,7 @@ from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import authenticate, login, logout
-from . import forms
+from . import forms, models
 
 
 class LoginView(FormView):
@@ -20,6 +20,7 @@ class LoginView(FormView):
         user = authenticate(self.request, username=email, password=password)
         if user is not None:
             login(self.request, user)
+        user.verify_email()
         return super().form_valid(form)
 
 
@@ -35,7 +36,7 @@ class SignUpView(FormView):
     initial = {
         "first_name": "jeong hun",
         "last_name": "lee",
-        "email": "glen15@naver.com",
+        "email": "glen910115@gmail.com",
     }
 
     def form_valid(self, form):
@@ -45,4 +46,18 @@ class SignUpView(FormView):
         user = authenticate(self.request, username=email, password=password)
         if user is not None:
             login(self.request, user)
+        user.verify_email()
         return super().form_valid(form)
+
+
+def complete_verification(request, key):
+    try:
+        user = models.User.objects.get(email_secret=key)
+        user.email_verified = True
+        user.email_secret = ""  # 인증 후 지우는 것
+        user.save()
+        # to do : add succes message    dajango message framework를 참고할것
+    except models.User.DoesNotExist:
+        # to do : add error message
+        pass
+    return redirect(reverse("core:home"))

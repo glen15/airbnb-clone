@@ -2,6 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+import dotenv
 
 
 def main():
@@ -18,4 +19,5 @@ def main():
 
 
 if __name__ == "__main__":
+    dotenv.read_dotenv()  # dotenv 설치후 .env파일만들고 manage.py에 import하고 메인불러오기전에 불러오기
     main()

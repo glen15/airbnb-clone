@@ -138,3 +138,11 @@ AUTH_USER_MODEL = "users.User"
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")  # 사진 업로드하면 들어가는 업로드라는 폴더를 생성하는 것
 
 MEDIA_URL = "/media/"  # 파일폴더명은 uploads지만 url에서는 media로 나올거야.
+
+# Email configuration
+EMAIL_HOST = "smtp.mailgun.org"
+EMAIL_PORT = "587"
+EMAIL_HOST_USER = os.environ.get("MAILGUN_USERNAME")
+EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
+EMAIL_FROM = "TEAM-MAKER@sandbox5b6e8480eb414bc092daab96609ae480.mailgun.org"  # 회신불가 메일로 이름 아무거나, 뒤에 도메인은 받은걸로
+# 아이디 비번 여기 남길 수 없으니까(github에 올라가니까) .env만들어서 가져오기
