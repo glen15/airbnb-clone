@@ -113,3 +113,8 @@ class Room(core_models.TimeStampedModel):
                 all_ratings += review.rating_average()
             return round(all_ratings / len(all_reviews))
         return 0
+
+    def first_photo(self):
+        (photo,) = self.photos.all()[:1]
+        return photo.file.url
+        # 뒤에 , 붙여주면 arrey에서 첫번째 요소만 원한다는걸 알고 보내줌
