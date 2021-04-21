@@ -6,8 +6,11 @@ class LoginForm(forms.Form):
     # django 는 로그인형태로 아이디 이메일 암호를 요구한다
     # 근데 여기서 아이디랑 이메일을 같은걸로 만들거야 한번에 처리하게
 
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput)
+    email = forms.EmailField(widget=forms.EmailInput(attrs={"placeholder": "Email"}))
+    # placeholder를 css가 아니고 여기서하네
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"})
+    )
     # passwordInput 쓰는게 아니라 charField쓰고 형태를 암호에 맞게 바꿀거야(widget이용)
 
     # email이 있는 field를 확인하고 싶으면 method는 무조건 clean_으로 붙여야함 규칙임
@@ -31,8 +34,19 @@ class SignUpForm(forms.ModelForm):
         model = models.User
         fields = ("first_name", "last_name", "email")
 
-    password = forms.CharField(widget=forms.PasswordInput)
-    password1 = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
+        # placeholder 넣기 model form에 있을 때 사용방법
+        widgets = {
+            "first_name": forms.TextInput(attrs={"placeholder": "First name"}),
+            "last_name": forms.TextInput(attrs={"placeholder": "Last name"}),
+            "email": forms.EmailInput(attrs={"placeholder": "Email"}),
+        }
+
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Password"})
+    )
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={"placeholder": "Confirm Password"})
+    )
 
     def clean_password1(self):
         password = self.cleaned_data.get("password")
