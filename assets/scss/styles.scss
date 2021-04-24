@@ -14,17 +14,28 @@
 }
 
 .btn {
-    @apply w-full text-center rounded-lg py-5 font-medium border-gray-600 text-gray-600;
+    @apply w-full text-left rounded-lg py-5 font-medium border-gray-600 text-gray-600;
     
 }
 
 input {
-    @apply w-full rounded-lg py-5 font-medium border-gray-600 text-gray-600 text-left border px-5 focus:outline-none;
+    @apply rounded-lg py-5 font-medium text-left w-full border border-gray-600 text-gray-600 px-5;
+    &:focus {
+        @apply outline-none border-red-700;
+    }
 }
 
 form {
-    input {
+    .input {
         @apply mb-2;
+        &.has_error {
+            input {
+                @apply bg-red-200 border-red-200;
+                &:focus {
+                    @apply border-red-200;
+                }
+            }
+        }
     }
 }
 
