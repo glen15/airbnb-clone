@@ -14,7 +14,7 @@
 }
 
 .btn {
-    @apply w-full text-left rounded-lg py-5 font-medium border-gray-600 text-gray-600;
+    @apply w-full text-center rounded-lg py-5 font-medium border-gray-600 text-gray-600;
     
 }
 
@@ -30,9 +30,9 @@ form {
         @apply mb-2;
         &.has_error {
             input {
-                @apply bg-red-200 border-red-200;
+                @apply bg-red-200 border-gray-600;
                 &:focus {
-                    @apply border-red-200;
+                    @apply border-gray-600;
                 }
             }
         }

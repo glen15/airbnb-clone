@@ -14,7 +14,9 @@
 
 {% block content %}
     <div class="container lg:w-5/12 md:w-1/2 mx-auto my-10 flex flex-col items-center border border-gray-400 p-6">
+        
         {% include 'partials/social_login.html' %}
+        
         <form method="POST" action="{% url 'users:login' %}" class="w-full">
             {% csrf_token %} <!--사이트간 위조 방지 기술, 토큰으로 지정된 웹사이트에서 post가 왔는지 확인해줌-->
             {{form.email}}

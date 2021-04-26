@@ -19,7 +19,7 @@
                 {% endfor %}
             {% endif %}
 
-            
+            <!--모든 인풋들 개별 작성이 아니라 장고가 제공하는 루프를 이용 django looping over the form's fields-->
             {% for field in form %}
                 <div class="input w-full {% if field.errors %}has_error{% endif %}">
                     {{field}}
