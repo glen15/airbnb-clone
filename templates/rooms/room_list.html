@@ -13,7 +13,7 @@ Home
         <div class="rounded-xl bg-gray-800 h-50vh mt-32 mb-16 bg-cover bg-center" style="background-image:url(https://images.unsplash.com/photo-1517166988974-5e377975dd67?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1721&q=80)"></div>
         <div class="flex flex-wrap">
             {% for room  in rooms  %}
-            {% include 'partials/room_card.html' with room=room %}<!-- room=room에서 뒤에 room이 for문에서 받은 room -->
+                {% include 'mixins/room_card.html' with room=room %}<!-- room=room에서 뒤에 room이 for문에서 받은 room -->
             {% endfor %}
         </div>
         <div class="flex items-center justify-center">

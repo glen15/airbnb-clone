@@ -10,29 +10,8 @@
 {% block content %}
     <div class="container lg:w-5/12 md:w-1/2 mx-auto my-10 flex flex-col items-center border border-gray-400 p-6">
         {% include 'partials/social_login.html' %}
-        <form method="POST" action="{% url 'users:signup' %}" class="w-full">
-            {% csrf_token %} 
-            
-            {% if form.non_filed_errors %}
-                {% for error in form.non_field_errors %}
-                    <span class="text-red-700 font-medium text-sm">{{error}}</span>
-                {% endfor %}
-            {% endif %}
-
-            <!--모든 인풋들 개별 작성이 아니라 장고가 제공하는 루프를 이용 django looping over the form's fields-->
-            {% for field in form %}
-                <div class="input w-full {% if field.errors %}has_error{% endif %}">
-                    {{field}}
-                    {% if field.errors %}
-                        {% for error in field.errors %}
-                            <span class="text-red-700 font-medium text-sm">{{error}}</span>
-                        {% endfor %}
-                    {% endif %}
-                </div>    
-            {% endfor %}
-
-            <button class="btn bg-red-400 border text-white">Sign up</button>
-        </form>
+        
+        {% include 'mixins/auth/auth_form.html' with form=form cta="Sign Up"%}
 
         <div class="mt-2">
             <span class="mr-2">Have an account?</span>
