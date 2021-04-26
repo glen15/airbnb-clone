@@ -207,4 +207,9 @@ def kakao_callback(request):
 
 
 class UserProfileView(DetailView):
-    pass
+
+    model = models.User
+    context_object_name = "user_obj"
+    # context_object_name 으로 지정안하면 로그인 후 룸디테일 등 에서 다른 유저 프로필을 열었을 때 그게 적용되어버림
+    # 이걸 통해서 프로필 눌렀을 때 로그인한 유저의 정보로 연결하도록 해야한다.
+    # context 는 기본적으로 랜더해주는 것, 그래서 이게 로그인한 아이디의 프로필로 가도록함

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+
+{% block page_title %}
+    {{user.first_name}}'s' Profile
+{% endblock page_title %}
+    
+{% block content %}
+<div class="container lg:w-5/12 md:w-1/2 mx-auto my-10 flex flex-col items-center border border-gray-400 p-6">
+        
+    {% include 'mixins/user_avatar.html' with user=user_obj %}
+
+    <div class="flex items-center">
+        <span class="font-medium text-2xl mt-2">{{user_obj.first_name}}</span>
+    </div>
+    <span>
+        {% if user_obj.superhost %}
+            <i class="fas fa-check-circle text-red-400 ml-2"></i>
+        {% endif %}       
+    </span>
+
+    <span class="text-lg">{{user.bio}}</span>
+
+    <a href="#" class='btn' >Edit Profile</a>
+
+</div>
+{% endblock content %}
+    
