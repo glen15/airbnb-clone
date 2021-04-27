@@ -2,27 +2,45 @@
 
 
 {% block page_title %}
-    {{user.first_name}}'s' Profile
+    {{user_obj.first_name}}'s' Profile
 {% endblock page_title %}
     
 {% block content %}
-<div class="container lg:w-5/12 md:w-1/2 mx-auto my-10 flex flex-col items-center border border-gray-400 p-6">
+    <div class="h-100vh">
+        <div class="container lg:w-5/12 md:w-1/2 mx-auto my-10 flex flex-col items-center border border-gray-400 p-6">
+            
+            {% include 'mixins/user_avatar.html' with user=user_obj %}
+    
+            <div class="flex items-center">
+                <span class="font-medium text-2xl mt-2">{{user_obj.first_name}}</span>
+            </div>
+            <span>
+                {% if user_obj.superhost %}
+                    <i class="fas fa-check-circle text-red-400 ml-2"></i>
+                {% endif %}       
+            </span>
+    
+            <span class="text-lg mb-4">{{user_obj.bio}}</span>
+    
+            <!-- 로그인한 유저 프로필 에디트만 가능해야하니까 -->
+            {% if user == user_obj %} 
+                <a href="{% url 'users:update' %}" class='btn-link bg-red-400 text-white' >Edit Profile</a>
+            {% endif %}
+                
+        </div>
         
-    {% include 'mixins/user_avatar.html' with user=user_obj %}
-
-    <div class="flex items-center">
-        <span class="font-medium text-2xl mt-2">{{user_obj.first_name}}</span>
+        {% if user_obj.rooms.all.count > 0  %}
+            <div class="container mx-auto flex flex-col items-center">
+                <h3 class="font-medium mb-5 text-2xl">{{user_obj.first_name}}'s Rooms</h3>
+                <div class="flex flex-wrap">
+                    <!--이 계정이 가지고 있는 룸 목록 가져오기, room_list.html에서 똑같이 복사해왔지-->
+                    {% for room  in user_obj.rooms.all  %}
+                        {% include 'mixins/room_card.html' with room=room %}<!-- room=room에서 뒤에 room이 for문에서 받은 room -->
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+            
     </div>
-    <span>
-        {% if user_obj.superhost %}
-            <i class="fas fa-check-circle text-red-400 ml-2"></i>
-        {% endif %}       
-    </span>
-
-    <span class="text-lg">{{user.bio}}</span>
-
-    <a href="#" class='btn' >Edit Profile</a>
-
-</div>
 {% endblock content %}
     

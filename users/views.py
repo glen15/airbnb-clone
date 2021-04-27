@@ -1,7 +1,7 @@
 import os
 import requests  # pipenv install requests 해서 설치하고 가져온 것
 from django.views import View
-from django.views.generic import FormView, DetailView
+from django.views.generic import FormView, DetailView, UpdateView
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, reverse
 from django.contrib.auth import authenticate, login, logout
@@ -213,3 +213,30 @@ class UserProfileView(DetailView):
     # context_object_name 으로 지정안하면 로그인 후 룸디테일 등 에서 다른 유저 프로필을 열었을 때 그게 적용되어버림
     # 이걸 통해서 프로필 눌렀을 때 로그인한 유저의 정보로 연결하도록 해야한다.
     # context 는 기본적으로 랜더해주는 것, 그래서 이게 로그인한 아이디의 프로필로 가도록함
+
+
+class UpdateProfileView(UpdateView):
+
+    model = models.User
+    template_name = "users/update-profile.html"
+    fields = (
+        "email",
+        "first_name",
+        "last_name",
+        "avatar",
+        "gender",
+        "bio",
+        "birthdate",
+        "language",
+        "currency",
+    )
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    #profile edit에서 이메일 바꾸면 바로 유저네임에 넣어버리려고
+    def form_valid(self, form):
+        email = form.def cleaned_data.get("email")
+        self.object.username = email
+        self.object.save()
+        return super().form_valid(form)

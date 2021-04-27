@@ -1,4 +1,5 @@
-<form method="POST" class="w-full">
+<form method="POST" class="w-full" enctype="multipart/form-data">
+    <!--enctype="multipart/form-dat" 안하면 백엔드에서 보낸 파일을 받지 못해-->
     {% csrf_token %} 
     
     {% if form.non_filed_errors %}
