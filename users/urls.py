@@ -14,6 +14,7 @@ urlpatterns = [
         "verify/<str:key>/", views.complete_verification, name="complete_verification"
     ),
     path("update-profile/", views.UpdateProfileView.as_view(), name="update"),
+    path("update-password/", views.UpdatePasswordView.as_view(), name="password"),
     path("<int:pk>/", views.UserProfileView.as_view(), name="profile"),
 ]
 # 위랑 다른 이유: log_out이 import logout에서 가져온 함수이기 때문

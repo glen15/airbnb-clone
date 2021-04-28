@@ -1,5 +1,6 @@
 import os
 import requests  # pipenv install requests 해서 설치하고 가져온 것
+from django.contrib.auth.views import PasswordChangeView
 from django.views import View
 from django.views.generic import FormView, DetailView, UpdateView
 from django.urls import reverse_lazy
@@ -220,10 +221,8 @@ class UpdateProfileView(UpdateView):
     model = models.User
     template_name = "users/update-profile.html"
     fields = (
-        "email",
         "first_name",
         "last_name",
-        "avatar",
         "gender",
         "bio",
         "birthdate",
@@ -234,9 +233,28 @@ class UpdateProfileView(UpdateView):
     def get_object(self, queryset=None):
         return self.request.user
 
-    #profile edit에서 이메일 바꾸면 바로 유저네임에 넣어버리려고
-    def form_valid(self, form):
-        email = form.def cleaned_data.get("email")
-        self.object.username = email
-        self.object.save()
-        return super().form_valid(form)
+    # updateview 에서 plcaeholder사용하는거
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields["birthdate"].widget.attrs = {"placeholder": "Birthdate"}
+        form.fields["first_name"].widget.attrs = {"placeholder": "First name"}
+        form.fields["last_name"].widget.attrs = {"placeholder": "Last name"}
+        form.fields["bio"].widget.attrs = {"placeholder": "Bio"}
+
+        return form
+
+
+class UpdatePasswordView(PasswordChangeView):
+    template_name = "users/update-password.html"
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class=form_class)
+        form.fields["old_password"].widget.attrs = {"placeholder": "Current password"}
+        form.fields["new_password1"].widget.attrs = {"placeholder": "New password"}
+        form.fields["new_password2"].widget.attrs = {
+            "placeholder": "New password again"
+        }
+        return form
+
+    def get_success_url(self):
+        return self.request.user.get_absolute_url()
