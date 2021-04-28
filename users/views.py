@@ -12,11 +12,13 @@ from django.contrib.messages.views import SuccessMessageMixin
 from . import forms, models, mixins
 
 
-class LoginView(mixins.LoggedOulyView, FormView):
+class LoginView(mixins.LoggedOutOulyView, FormView):
 
     template_name = "users/login.html"
     form_class = forms.LoginForm
-    success_url = reverse_lazy("core:home")
+
+    # success_url = reverse_lazy("core:home")
+    # 뒤에 get_success_url 사용으로 변경 -> 기존에 가려던 화면 유지해주기 위해서, - 프로필 에디트 하려했는데 로그인하라고해서 로그인하면 원래 하려던 프로필 에디터러 가도록
     # reverse 는 뒤에있는 애로 가서 그 친구의 실제 url을 가져온다
     # reverse_lazy는 바로 안불러오고 view를 불러올 때 부른다
 
@@ -28,6 +30,13 @@ class LoginView(mixins.LoggedOulyView, FormView):
             login(self.request, user)
         user.verify_email()
         return super().form_valid(form)
+
+    def get_success_url(self):
+        next_arg = self.request.GET.get("next")  # url 쿼리에서 next인자값을 받아오는거지
+        if next_arg is not None:
+            return next_arg
+        else:
+            return reverse("core:home")
 
 
 def log_out(request):
@@ -217,7 +226,7 @@ class UserProfileView(DetailView):
     # context 는 기본적으로 랜더해주는 것, 그래서 이게 로그인한 아이디의 프로필로 가도록함
 
 
-class UpdateProfileView(SuccessMessageMixin, UpdateView):
+class UpdateProfileView(mixins.loggedInOnlyView, SuccessMessageMixin, UpdateView):
 
     model = models.User
     template_name = "users/update-profile.html"
@@ -247,7 +256,12 @@ class UpdateProfileView(SuccessMessageMixin, UpdateView):
         return form
 
 
-class UpdatePasswordView(SuccessMessageMixin, PasswordChangeView):
+class UpdatePasswordView(
+    mixins.EmailLoginOnlyView,
+    mixins.loggedInOnlyView,
+    SuccessMessageMixin,
+    PasswordChangeView,
+):
     template_name = "users/update-password.html"
     success_message = "Password Updated"
 
