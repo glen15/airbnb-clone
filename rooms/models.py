@@ -118,3 +118,7 @@ class Room(core_models.TimeStampedModel):
         (photo,) = self.photos.all()[:1]
         return photo.file.url
         # 뒤에 , 붙여주면 arrey에서 첫번째 요소만 원한다는걸 알고 보내줌
+
+    def get_next_four_photos(self):
+        photos = self.photos.all()[1:5]
+        return photos
