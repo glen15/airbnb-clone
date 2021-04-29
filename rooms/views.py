@@ -1,4 +1,4 @@
-from django.views.generic import ListView, DetailView, View
+from django.views.generic import ListView, DetailView, UpdateView, View
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from . import models, forms
@@ -118,3 +118,23 @@ class SearchView(View):
             form = forms.SearchForm()
             # 첫form을 가져와야할때(데이터확인과정없는 순간)  request.GET아닌걸로 연결해서 required 안뜨게 하는거
         return render(request, "rooms/search.html", {"form": form})
+
+
+class EditRoomView(UpdateView):
+    model = models.Room
+    template_name = "rooms/room_edit.html"
+    fields = (
+        "name",
+        "description",
+        "price",
+        "address",
+        "guests",
+        "beds",
+        "baths",
+        "check_in",
+        "check_out",
+        "room_type",
+        "amenities",
+        "facilities",
+        "house_rules",
+    )

@@ -1,0 +1,12 @@
+<div class="input w-full {% if field.errors %}has_error{% endif %}">
+    {{field.label}} <!--auth 에 있는 form_input 과 차이점-->
+    {{field}}
+    {% if field.errors %}
+        
+        {% for error in field.errors  %}
+            <span class="text-red-700 font-medium text-sm">{{error}}</span>
+        {% endfor %}
+            
+    {% endif %}
+    
+</div>

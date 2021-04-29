@@ -1,0 +1,18 @@
+<form method="POST" class="w-full" enctype="multipart/form-data">
+    <!--enctype="multipart/form-dat" 안하면 백엔드에서 보낸 파일을 받지 못해-->
+    {% csrf_token %} 
+    
+    {% if form.non_filed_errors %}
+        {% for error in form.non_field_errors %}
+            <span class="text-red-700 font-medium text-sm">{{error}}</span>
+        {% endfor %}
+    {% endif %}
+
+    <!--모든 인풋들 개별 작성이 아니라 장고가 제공하는 루프를 이용 django looping over the form's fields-->
+    {% for field in form %}
+        {% include 'mixins/room/room_input.html' with field=field %}
+    {% endfor %}
+
+    <button class="btn bg-red-400 border text-white">{{cta}}</button>
+    <!--cta = call to action-->
+</form>

@@ -1,7 +1,8 @@
 {% if user.avatar %}
-    <div class="h-16 w-16 rounded-full bg-cover" style="background-image: url({{user.avatar.url}})">
+    <div class="{{h_and_w|default:'h-16 w-16'}} rounded-full bg-cover" style="background-image: url({{user.avatar.url}})">
+        <!-- 불러올때 h_and_w='h-10 w-10' 이런식으로 지정 안하면 16으로 디폴트   / room_detail에서 리뷰 불러오는거 참고 -->
 {% else %}
-    <div class="h-16 w-16 bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
-        <span class="text-2xl">{{user.first_name|first}}</span>
+    <div class="{{h_and_w|default:'h-16 w-16'}} bg-gray-700 rounded-full text-white flex justify-center items-center overflow-hidden">
+        <span class="{{text|default:'text-2xl'}}">{{user.first_name|first}}</span>
 {% endif %}
 </div>

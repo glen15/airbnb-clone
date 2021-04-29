@@ -98,4 +98,9 @@ form {
     }
 }
 
+.border-section{
+    @apply border-b border-gray-400 pb-5 mt-5;
+}
+
+
 @tailwind utilities;
