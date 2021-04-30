@@ -148,3 +148,7 @@ EMAIL_HOST_USER = os.environ.get("MAILGUN_USERNAME")
 EMAIL_HOST_PASSWORD = os.environ.get("MAILGUN_PASSWORD")
 EMAIL_FROM = "TEAM-MAKER@sandbox5b6e8480eb414bc092daab96609ae480.mailgun.org"  # 회신불가 메일로 이름 아무거나, 뒤에 도메인은 받은걸로
 # 아이디 비번 여기 남길 수 없으니까(github에 올라가니까) .env만들어서 가져오기
+
+
+# Auth
+LOGIN_URL = "/users/login/"
