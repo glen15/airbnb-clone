@@ -1,6 +1,8 @@
+from django.http import Http404
 from django.views.generic import ListView, DetailView, UpdateView, View
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from users import mixins as user_mixins
 from . import models, forms
 
 # 밑에 둘은 function기반으로할때 사용
@@ -120,7 +122,7 @@ class SearchView(View):
         return render(request, "rooms/search.html", {"form": form})
 
 
-class EditRoomView(UpdateView):
+class EditRoomView(user_mixins.loggedInOnlyView, UpdateView):
     model = models.Room
     template_name = "rooms/room_edit.html"
     fields = (
@@ -138,3 +140,21 @@ class EditRoomView(UpdateView):
         "facilities",
         "house_rules",
     )
+    # 보안을 위해, 내방아닌데 url에 edit치고 들어오면 안되니까 로그인 유저랑 방주인이랑 맞는지 pk로 확인
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404()
+        return room
+
+
+class RoomPhotosView(user_mixins.loggedInOnlyView, DetailView):
+
+    model = models.Room  # 결국 이게 위에 있는 RoomDetail 이지
+    template_name = "rooms/room_photos.html"
+
+    def get_object(self, queryset=None):
+        room = super().get_object(queryset=queryset)
+        if room.host.pk != self.request.user.pk:
+            raise Http404()
+        return room
