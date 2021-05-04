@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django_countries.fields import CountryField
 from core import models as core_models  # import 이후 위에거랑 이름 같으니 as 로 명시해주는 것
+from cal import Calendar
 
 
 class AbstractItem(core_models.TimeStampedModel):
@@ -115,10 +116,18 @@ class Room(core_models.TimeStampedModel):
         return 0
 
     def first_photo(self):
-        (photo,) = self.photos.all()[:1]
-        return photo.file.url
-        # 뒤에 , 붙여주면 arrey에서 첫번째 요소만 원한다는걸 알고 보내줌
+        try:
+            (photo,) = self.photos.all()[:1]
+            return photo.file.url
+            # 뒤에 , 붙여주면 arrey에서 첫번째 요소만 원한다는걸 알고 보내줌
+        except ValueError:
+            return None
 
     def get_next_four_photos(self):
         photos = self.photos.all()[1:5]
         return photos
+
+    def get_calendars(self):
+        calendar = Calendar(2021, 5)
+        print(calendar.get_month())
+        return False

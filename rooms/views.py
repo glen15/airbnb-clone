@@ -1,9 +1,11 @@
 from django.http import Http404
-from django.views.generic import ListView, DetailView, UpdateView, View
+from django.views.generic import ListView, DetailView, UpdateView, FormView, View
+from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, reverse
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from users import mixins as user_mixins
 from . import models, forms
 
@@ -130,10 +132,13 @@ class EditRoomView(user_mixins.loggedInOnlyView, UpdateView):
     fields = (
         "name",
         "description",
+        "country",
+        "city",
         "price",
         "address",
         "guests",
         "beds",
+        "bedrooms",
         "baths",
         "check_in",
         "check_out",
@@ -175,3 +180,43 @@ def delete_photo(request, room_pk, photo_pk):
             return redirect(reverse("rooms:photos", kwargs={"pk": room_pk}))
     except models.Room.DoesNotExist:
         return redirect(reverse("core:home"))
+
+
+class EditPhotoView(user_mixins.loggedInOnlyView, SuccessMessageMixin, UpdateView):
+
+    model = models.Photo
+    template_name = "rooms/photo_edit.html"
+    pk_url_kwarg = "photo_pk"  # 원래 그냥 pk를찾게되는데 여기 위에서 photo_pk로해놔서 이렇게해줘야함
+    success_message = "Photo updated"
+    fields = ("caption",)  # fields는 항상 리스트나 튜플식으로 되어야하기 때문에 스트링이면 오류날거야. 하나라도 이렇게해둘 것
+
+    def get_success_url(self):
+        room_pk = self.kwargs.get("room_pk")
+        print(room_pk)
+        return reverse("rooms:photos", kwargs={"pk": room_pk})
+
+
+class AddPhotoView(user_mixins.loggedInOnlyView, FormView):
+
+    template_name = "rooms/photo_create.html"
+    fields = ("caption", "file")
+    form_class = forms.CreatePhotoForm  # forms.py에 있음
+
+    def form_valid(self, form):
+        pk = self.kwargs.get("pk")
+        form.save(pk)
+        messages.success(self.request, "Photo Uploaded")
+        return redirect(reverse("rooms:photos", kwargs={"pk": pk}))
+
+
+class CreateRoomView(user_mixins.loggedInOnlyView, FormView):
+    form_class = forms.CreateRoomForm
+    template_name = "rooms/room_create.html"
+
+    def form_valid(self, form):
+        room = form.save()
+        room.host = self.request.user
+        room.save()
+        form.save_m2m()  # 위에 room.save()로 데이터베이스에 저장한 후에 이걸해야함 many to many form 저장하기 위해서
+        messages.success(self.request, "Room Created")
+        return redirect(reverse("rooms:detail", kwargs={"pk": room.pk}))
