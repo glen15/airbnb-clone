@@ -1,6 +1,15 @@
 # calendar.py  로 이름만들지 말것
-
+from django.utils import timezone
 import calendar
+
+
+class Day:
+    def __init__(self, number, past):
+        self.number = number
+        self.past = past
+
+    def __str__(self):
+        return str(self.number)
 
 
 class Calendar(calendar.Calendar):
@@ -31,9 +40,17 @@ class Calendar(calendar.Calendar):
             for (
                 day,
                 _,
-            ) in week:  # for 다음 변수 두개넣어서 튜플로 된 애를 앞 뒤 하나 씩 따로 변수받아냄( _ 는 무시하라는 뜻)
-                days.append(day)
-
+            ) in week:
+                # for 다음 변수 두개넣어서 튜플로 된 애를 앞 뒤 하나 씩 따로 변수받아냄( _ 는 무시하라는 뜻)
+                now = timezone.now()
+                today = now.day
+                month = now.month
+                past = False
+                if month == self.month:
+                    if day <= today:
+                        past = True
+                new_day = Day(day, past)
+                days.append(new_day)
         return days
 
     def get_month(self):
