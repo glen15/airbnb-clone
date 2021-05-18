@@ -21,7 +21,10 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("", include("core.urls", namespace="core")),
     path("rooms/", include("rooms.urls", namespace="rooms")),
-    path("users/", include("users.urls", namespace="users")),  # user/urls.py만들고 여기 작성
+    path("users/", include("users.urls", namespace="users")),  # users/urls.py 만들고 여기 작성
+    path(
+        "reservations/", include("reservations.urls", namespace="reservations")
+    ),  # reservations/urls.py 만들고 여기 작성
     path("admin/", admin.site.urls),
 ]
 
