@@ -25,6 +25,7 @@ urlpatterns = [
     path(
         "reservations/", include("reservations.urls", namespace="reservations")
     ),  # reservations/urls.py 만들고 여기 작성
+    path("reviews/", include("reviews.urls", namespace="reviews")),
     path("admin/", admin.site.urls),
 ]
 
