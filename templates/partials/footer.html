@@ -1,4 +1,8 @@
 
-<footer class="container w-full mx-auto text-center py-5 border-t font-medium text-gray-400">
-    &copy; 2021 Fairy Cake, Inc. All right reserved.
+{% load i18n %}
+<footer class="container w-full mx-auto text-center py-5 border-t font-medium text-gray-400 flex flex-col">
+    <span>
+        {% trans "Please don't copy us" %}
+    </span>
+    <span>&copy; 2021 Fairy Cake, Inc. {% trans 'All right reserved' %}.</span>
 </footer>
