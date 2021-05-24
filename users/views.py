@@ -1,5 +1,7 @@
 import os
 import requests  # pipenv install requests 해서 설치하고 가져온 것
+from django.utils import translation
+from django.http import HttpResponse
 from django.contrib.auth.views import PasswordChangeView
 from django.views import View
 from django.views.generic import FormView, DetailView, UpdateView
@@ -286,3 +288,13 @@ def switch_hosting(request):
     except KeyError:
         request.session["is_hosting"] = True
     return redirect(reverse("core:home"))
+
+
+def switch_language(request):
+    lang = request.GET.get("lang", None)
+    if lang is not None:
+        translation.activate(lang)  #
+        response = HttpResponse(200)  #
+        response.set_cookie(settings.LANGUAGE_COOKIE_NAME, lang)  #
+        # request.session[translation.LANGUAGE_SESSION_KEY] = lang
+    return response  # HttpResponse(status=200)

@@ -1,44 +1,53 @@
 {% load static i18n%}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!--font-awesome 가져오기-->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
-    <!--css 가져온다-->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    
-    <title> 
-        {% block page_title%}{% endblock page_title%} | Nbnb
-    </title>
-</head>
-<body class="text-gray-800 mt-24 font-light">
-    {% include "partials/messages.html" %}
-    <header class="container max-w-full inset-0 flex items-center justify-between px-6 h-20 border-b border-gray-200 fixed bg-white inset-0">
-        <div class="flex items-center w-1/2">
-            <a href="{% url 'core:home' %}" class="mr-6">
-                <img class="w-16" src="{% static 'img/logo.png' %}" />
-            </a>
-            {% block search-bar %}    
-            <form method="get" action="{% url 'rooms:search' %}" class="w-9/12">
-                <input 
-                class="search-box border w-9/12 px-5 py-2 text-sm font-medium placeholder-gray-500 rounded-lg shadow-md hover:shadow-lg focus:outline-none"
-                name="city"
-                placeholder="{% trans 'Search by City' %}"
-                />
-                <button class="ml-3"><i class="fas fa-search"></i></button>
-            </form> 
-            {% endblock search-bar %}
-        </div>
-        {% include "partials/nav.html" %}
-    </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <!--font-awesome 가져오기-->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+        <!--css 가져온다-->
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+        
+        <title> 
+            {% block page_title%}{% endblock page_title%} | Nbnb
+        </title>
+    </head>
+    <body class="text-gray-800 mt-24 font-light">
+        {% include "partials/messages.html" %}
+        <header class="container max-w-full inset-0 flex items-center justify-between px-6 h-20 border-b border-gray-200 fixed bg-white inset-0">
+            <div class="flex items-center w-1/2">
+                <a href="{% url 'core:home' %}" class="mr-6">
+                    <img class="w-16" src="{% static 'img/logo.png' %}" />
+                </a>
+                {% block search-bar %}    
+                <form method="get" action="{% url 'rooms:search' %}" class="w-9/12">
+                    <input 
+                    class="search-box border w-9/12 px-5 py-2 text-sm font-medium placeholder-gray-500 rounded-lg shadow-md hover:shadow-lg focus:outline-none"
+                    name="city"
+                    placeholder="{% trans 'Search by City' %}"
+                    />
+                    <button class="ml-3"><i class="fas fa-search"></i></button>
+                </form> 
+                {% endblock search-bar %}
+            </div>
+            {% include "partials/nav.html" %}
+        </header>
 
 
-    {% block content %}{% endblock %}    <!-- block으로 해놓은 곳 안으로 자식 html들이 들어가게됨 -->
+        {% block content %}{% endblock %}    <!-- block으로 해놓은 곳 안으로 자식 html들이 들어가게됨 -->
 
-    {% include "partials/footer.html"%}
-</body>
+        {% include "partials/footer.html"%}
+        <script>
+            const langSelect = document.getElementById("js-lang");
+            const handleLangChange = () => {
+                const selected = langSelect.value;
+                fetch(`{% url 'users:switch-language' %}?lang=${selected}`).then(() => window.location.reload());
+                window.location.reload();
+            }
+            langSelect.addEventListener("change", handleLangChange);
+        </script>
+    </body>
 </html>

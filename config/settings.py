@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+from django.utils.translation import LANGUAGE_SESSION_KEY
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -61,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -154,5 +157,7 @@ EMAIL_FROM = "TEAM-MAKER@sandbox5b6e8480eb414bc092daab96609ae480.mailgun.org"  #
 LOGIN_URL = "/users/login/"
 
 # Locale
-
 LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
+
+# Language
+LANGUAGE_COOKIE_NAME = "django_language"

@@ -17,6 +17,7 @@ urlpatterns = [
     path("update-password/", views.UpdatePasswordView.as_view(), name="password"),
     path("<int:pk>/", views.UserProfileView.as_view(), name="profile"),
     path("switch-hosting/", views.switch_hosting, name="switch-hosting"),
+    path("switch-language/", views.switch_language, name="switch-language"),
 ]
 # 위랑 다른 이유: log_out이 import logout에서 가져온 함수이기 때문
 #   # urls.py작업해주고 config urls.py 에 추가하기
